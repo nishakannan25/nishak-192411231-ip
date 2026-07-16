@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Tourist Page</title>
+    <style>
+        /* ===== BASE STYLES ===== */
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Cambria, serif;
+            font-size: 14px;
+            color: #1a2a4a;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ===== UNDERWATER CORAL REEF BACKGROUND ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            animation: slowPan 30s ease-in-out infinite alternate;
+        }
+
+        /* Light blue overlay on top of background image */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: rgba(135, 206, 235, 0.42);
+            pointer-events: none;
+        }
+
+        @keyframes slowPan {
+            0%   { transform: scale(1)    translate(0, 0); }
+            50%  { transform: scale(1.03) translate(-1%, 0.5%); }
+            100% { transform: scale(1.05) translate(1%, -0.5%); }
+        }
+
+        /* ===== SCROLLING BANNER ===== */
+        .scrolling-container {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(0, 0, 139, 0.85);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            font-family: Cambria, serif;
+            font-size: 14px;
+        }
+
+        .scrolling-text {
+            white-space: nowrap;
+            display: inline-block;
+            animation: scroll-left 28s linear infinite;
+        }
+
+        .scrolling-text img {
+            vertical-align: middle;
+            height: 28px;
+            margin: 0 15px;
+            border-radius: 4px;
+        }
+
+        @keyframes scroll-left {
+            0%   { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+
+
+        /* ===== MAIN CONTAINER — CENTER ALIGNED ===== */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            padding: 90px 20px 60px 20px;
+        }
+
+        /* ===== HERO TITLE ===== */
+        .main-title {
+            margin-top: 20px;
+            margin-bottom: 14px;
+            font-family: Cambria, serif;
+            font-size: 3.2em;
+            color: #003366;
+            text-shadow: 0 2px 8px rgba(0,51,102,0.2);
+            letter-spacing: 2px;
+            animation: titleEnter 1.2s cubic-bezier(0.2,0.8,0.2,1) forwards;
+        }
+
+        .main-subtitle {
+            font-family: Cambria, serif;
+            font-size: 14px;
+            color: #1a4a7a;
+            margin-bottom: 50px;
+            letter-spacing: 1px;
+        }
+
+        @keyframes titleEnter {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0)     scale(1); }
+        }
+
+        /* ===== SECTION HEADINGS ===== */
+        .section-title {
+            font-family: Cambria, serif;
+            font-size: 2.4em;
+            color: #003366;
+            text-align: center;
+            text-shadow: 0 2px 6px rgba(0,51,102,0.15);
+            margin-bottom: 40px;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== DESTINATION CARDS (Landscape, Alternating) ===== */
+        .card {
+            display: flex;
+            flex-direction: row;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.9);
+            width: 100%;
+            max-width: 1050px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,51,102,0.15);
+            margin-bottom: 50px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform-style: preserve-3d;
+        }
+        .card.reverse       { flex-direction: row-reverse; }
+        .card.visible       { opacity: 1; transform: translateY(0); }
+
+        .card-img {
+            width: 50%;
+            height: 320px;
+            object-fit: cover;
+            opacity: 0.95;
+            transition: transform 0.5s ease;
+        }
+        .card:hover .card-img { transform: scale(1.05); }
+
+        .card-content {
+            width: 50%;
+            padding: 36px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-family: Cambria, serif;
+            font-size: 14px;
+        }
+
+        .card-content h2 {
+            margin: 0 0 10px 0;
+            font-family: Cambria, serif;
+            font-size: 2em;
+            color: #003366;
+            text-shadow: none;
+            letter-spacing: 1px;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 7px 16px;
+            border-radius: 25px;
+            font-family: Cambria, serif;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            align-self: flex-start;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+
+        /* ===== BLUE BUTTON — WHITE TEXT ===== */
+        .custom-btn {
+            background: linear-gradient(135deg, #0047AB, #007BFF);
+            color: #ffffff;
+            padding: 11px 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 8px;
+            font-family: Cambria, serif;
+            font-size: 14px;
+            cursor: pointer;
+            align-self: flex-start;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,71,171,0.4);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .custom-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,123,255,0.6);
+            background: linear-gradient(135deg, #003d99, #005fd6);
+        }
+
+        /* Description reveal */
+        .desc-text {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin: 0;
+            transition: max-height 0.6s ease-out, opacity 0.5s ease-out, margin 0.5s ease-out;
+            text-align: justify;
+            line-height: 1.7;
+            font-family: Cambria, serif;
+            font-size: 14px;
+            color: #1a3a5c;
+            text-shadow: none;
+        }
+        .desc-text.show {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 18px;
+        }
+
+        /* ===== BOOKING DETAILS SECTION ===== */
+        .booking-section {
+            width: 100%;
+            max-width: 1050px;
+            margin-top: 20px;
+            margin-bottom: 60px;
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+        }
+
+        .booking-card {
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 18px;
+            padding: 28px 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,51,102,0.12);
+            opacity: 0;
+            transform: translateY(40px) scale(0.96);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .booking-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .booking-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(0,71,171,0.4);
+        }
+
+        .booking-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .booking-card h3 {
+            font-family: Cambria, serif;
+            font-size: 1.2em;
+            color: #003366;
+            margin: 0 0 8px 0;
+            text-shadow: none;
+        }
+
+        .booking-card p {
+            font-family: Cambria, serif;
+            font-size: 14px;
+            color: #1a3a5c;
+            margin: 0 0 14px 0;
+            line-height: 1.55;
+        }
+
+        .booking-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .booking-info span {
+            font-family: Cambria, serif;
+            font-size: 13px;
+            color: #1a3a5c;
+        }
+        .booking-info .label {
+            font-weight: bold;
+            color: #0047AB;
+        }
+
+        /* ===== ACHIEVEMENTS SECTION ===== */
+        .achievements-section {
+            width: 100%;
+            max-width: 1050px;
+            margin-top: 20px;
+            margin-bottom: 60px;
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+
+        .achievement-card {
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid rgba(255,255,255,0.9);
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,51,102,0.12);
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .achievement-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .achievement-card img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.6);
+            margin-bottom: 18px;
+            box-shadow: 0 0 18px rgba(255,255,255,0.25);
+        }
+        .achievement-card h3 {
+            margin: 0 0 10px 0;
+            font-family: Cambria, serif;
+            font-size: 1.35em;
+            color: #003366;
+            text-shadow: none;
+        }
+        .achievement-card p {
+            margin: 0;
+            font-family: Cambria, serif;
+            font-size: 14px;
+            line-height: 1.55;
+            color: #1a3a5c;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .card, .card.reverse { flex-direction: column; }
+            .card-img { width: 100%; height: 240px; }
+            .card-content { width: 100%; }
+            .booking-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Scrolling Banner -->
+    <div class="scrolling-container">
+        <div class="scrolling-text">
+            🌍 Welcome to My Tourist Page! &nbsp;|&nbsp;
+            <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=100&h=30&fit=crop" alt="Paris">
+            ✈️ Book your dream destinations with us! &nbsp;|&nbsp;
+            <img src="https://images.unsplash.com/photo-1527576539890-dfa815648363?w=100&h=30&fit=crop" alt="Travel">
+            🏆 Get 10% off your first luxury trip! &nbsp;|&nbsp;
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=100&h=30&fit=crop" alt="Mountain">
+            🌟 Premium Packages — Explore the World! &nbsp;|&nbsp;
+            🌍 Welcome to My Tourist Page!
+        </div>
+    </div>
+
+    <!-- CENTER-ALIGNED MAIN CONTENT -->
+    <div class="main-container">
+        <h1 class="main-title">Welcome to My Tourist Page</h1>
+        <p class="main-subtitle">Discover the World's Most Breathtaking Destinations</p>
+
+        <!-- ======= DESTINATION CARDS ======= -->
+
+        <!-- Destination 1: Eiffel Tower — Image Left -->
+        <div class="card reveal tiltable">
+            <img src="file:///C:/Users/nisha/.gemini/antigravity/brain/a2d2808e-31dd-427d-b06d-af6a7e5b9731/paris_eiffel_1784173971121.png"
+                 alt="Eiffel Tower, Paris" class="card-img">
+            <div class="card-content">
+                <h2>Eiffel Tower, Paris</h2>
+                <div class="price-badge">Package Price: $1,200</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">Experience the romance and beauty of Paris at the iconic Eiffel Tower. Our package includes a luxury dinner on the second floor, a scenic Seine river cruise, and VIP skip-the-line access to the summit for breathtaking panoramic views of the entire city skyline.</p>
+            </div>
+        </div>
+
+        <!-- Destination 2: Grand Canyon — Image Right -->
+        <div class="card reverse reveal tiltable">
+            <img src="file:///C:/Users/nisha/.gemini/antigravity/brain/a2d2808e-31dd-427d-b06d-af6a7e5b9731/grand_canyon_1784173982399.png"
+                 alt="Grand Canyon, USA" class="card-img">
+            <div class="card-content">
+                <h2>Grand Canyon, USA</h2>
+                <div class="price-badge">Package Price: $800</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">Marvel at the vastness and breathtaking colors of the Grand Canyon. Soar through the majestic canyon on a private helicopter tour before embarking on an exclusive sunset hiking expedition down the South Rim trails accompanied by an expert geologist guide.</p>
+            </div>
+        </div>
+
+        <!-- Destination 3: Great Wall — Image Left -->
+        <div class="card reveal tiltable">
+            <img src="file:///C:/Users/nisha/.gemini/antigravity/brain/a2d2808e-31dd-427d-b06d-af6a7e5b9731/great_wall_1784173996233.png"
+                 alt="Great Wall of China" class="card-img">
+            <div class="card-content">
+                <h2>Great Wall of China</h2>
+                <div class="price-badge">Package Price: $1,500</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">Walk along history on the magnificent Great Wall of China. This immersive cultural package grants you private access to unrestored sections of the wall at sunrise, followed by authentic culinary masterclasses and a luxury stay in a traditional resort near Beijing.</p>
+            </div>
+        </div>
+
+        <!-- Destination 4: Machu Picchu — Image Right -->
+        <div class="card reverse reveal tiltable">
+            <img src="file:///C:/Users/nisha/.gemini/antigravity/brain/a2d2808e-31dd-427d-b06d-af6a7e5b9731/machu_picchu_1784174008428.png"
+                 alt="Machu Picchu, Peru" class="card-img">
+            <div class="card-content">
+                <h2>Machu Picchu, Peru</h2>
+                <div class="price-badge">Package Price: $2,000</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">Discover the ancient Incan citadel set high in the Andes Mountains. Enjoy a luxury train journey through the Sacred Valley right to the ruins, bringing you face-to-face with mysterious architectural wonders and lush mountain rainforest ecosystems.</p>
+            </div>
+        </div>
+
+        <!-- Destination 5: Taj Mahal — Image Left -->
+        <div class="card reveal tiltable">
+            <img src="file:///C:/Users/nisha/.gemini/antigravity/brain/a2d2808e-31dd-427d-b06d-af6a7e5b9731/taj_mahal_1784174018778.png"
+                 alt="Taj Mahal, India" class="card-img">
+            <div class="card-content">
+                <h2>Taj Mahal, India</h2>
+                <div class="price-badge">Package Price: $1,000</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">A symbol of eternal love, the Taj Mahal is an ivory-white marble masterpiece. We provide exclusive sunrise photography tours, luxury boutique hotel accommodations overlooking the Yamuna River, and private curated tours of nearby Agra Fort.</p>
+            </div>
+        </div>
+
+        <!-- Destination 6: Santorini — Image Right -->
+        <div class="card reverse reveal tiltable">
+            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=700&h=400&fit=crop&auto=format"
+                 alt="Santorini, Greece" class="card-img">
+            <div class="card-content">
+                <h2>Santorini, Greece</h2>
+                <div class="price-badge">Package Price: $1,800</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">Soak in the Mediterranean sun overlooking the iconic blue-domed churches of Oia. Travel in style with a private catamaran cruise around the volcanic caldera, followed by an exquisite local wine-tasting experience watching the world-famous Santorini sunset.</p>
+            </div>
+        </div>
+
+        <!-- Destination 7: Kyoto — Image Left -->
+        <div class="card reveal tiltable">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=700&h=400&fit=crop&auto=format"
+                 alt="Kyoto, Japan" class="card-img">
+            <div class="card-content">
+                <h2>Kyoto, Japan</h2>
+                <div class="price-badge">Package Price: $2,200</div>
+                <button class="custom-btn" onclick="toggleText(this)">Explore More</button>
+                <p class="desc-text">Step back in time among ancient temples, serene Zen rock gardens, and traditional Geisha districts. This package includes an authentic tea ceremony, kimono rental, and private tours of the glowing bamboo groves of Arashiyama.</p>
+            </div>
+        </div>
+
+        <!-- ======= BOOKING DETAILS SECTION ======= -->
+        <div class="booking-section">
+            <h2 class="section-title reveal">📅 Booking Details</h2>
+            <div class="booking-grid">
+
+                <!-- Booking Card 1 -->
+                <div class="booking-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&auto=format" alt="Flight Booking">
+                    <h3>✈️ Flight Booking</h3>
+                    <p>Book roundtrip flights to your chosen destination with exclusive partner airline discounts.</p>
+                    <div class="booking-info">
+                        <span class="label">Departure:</span><span>From Your City</span>
+                        <span class="label">Class:</span><span>Business / Economy</span>
+                        <span class="label">Meals:</span><span>Included</span>
+                        <span class="label">Baggage:</span><span>30 kg Allowed</span>
+                    </div>
+                    <button class="custom-btn" onclick="alert('Flight booking request submitted!')">Book Now</button>
+                </div>
+
+                <!-- Booking Card 2 -->
+                <div class="booking-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=200&fit=crop&auto=format" alt="Hotel Stay">
+                    <h3>🏨 Hotel Stay</h3>
+                    <p>Luxury 5-star accommodations hand-picked for comfort and proximity to iconic landmarks.</p>
+                    <div class="booking-info">
+                        <span class="label">Duration:</span><span>5–10 Nights</span>
+                        <span class="label">Room:</span><span>Suite / Deluxe</span>
+                        <span class="label">Breakfast:</span><span>Included</span>
+                        <span class="label">Pool:</span><span>Available</span>
+                    </div>
+                    <button class="custom-btn" onclick="alert('Hotel booking request submitted!')">Book Now</button>
+                </div>
+
+                <!-- Booking Card 3 -->
+                <div class="booking-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=200&fit=crop&auto=format" alt="Tour Package">
+                    <h3>🗺️ Tour Package</h3>
+                    <p>All-inclusive guided tour packages with expert local guides and curated itineraries.</p>
+                    <div class="booking-info">
+                        <span class="label">Group Size:</span><span>2–12 People</span>
+                        <span class="label">Guide:</span><span>Expert Local</span>
+                        <span class="label">Transport:</span><span>Included</span>
+                        <span class="label">Insurance:</span><span>Covered</span>
+                    </div>
+                    <button class="custom-btn" onclick="alert('Tour package request submitted!')">Book Now</button>
+                </div>
+
+                <!-- Booking Card 4 -->
+                <div class="booking-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=200&fit=crop&auto=format" alt="Water Activities">
+                    <h3>🌊 Water Activities</h3>
+                    <p>Thrilling water sports and leisure cruises — snorkeling, diving, catamaran rides and more.</p>
+                    <div class="booking-info">
+                        <span class="label">Activities:</span><span>10+ Options</span>
+                        <span class="label">Duration:</span><span>Half / Full Day</span>
+                        <span class="label">Equipment:</span><span>Provided</span>
+                        <span class="label">Instructor:</span><span>Certified</span>
+                    </div>
+                    <button class="custom-btn" onclick="alert('Activity booking request submitted!')">Book Now</button>
+                </div>
+
+                <!-- Booking Card 5 -->
+                <div class="booking-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop&auto=format" alt="Fine Dining">
+                    <h3>🍽️ Fine Dining</h3>
+                    <p>Reserve tables at world-renowned restaurants and enjoy handcrafted local culinary experiences.</p>
+                    <div class="booking-info">
+                        <span class="label">Cuisine:</span><span>Local &amp; Int'l</span>
+                        <span class="label">Reservations:</span><span>Pre-booked</span>
+                        <span class="label">Wine:</span><span>Pairing Available</span>
+                        <span class="label">Dietary:</span><span>Options Available</span>
+                    </div>
+                    <button class="custom-btn" onclick="alert('Dining reservation submitted!')">Book Now</button>
+                </div>
+
+                <!-- Booking Card 6 -->
+                <div class="booking-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1527856263669-12c3a0af2aa6?w=400&h=200&fit=crop&auto=format" alt="Travel Insurance">
+                    <h3>🛡️ Travel Insurance</h3>
+                    <p>Comprehensive travel insurance covering medical, cancellation, and emergency evacuation worldwide.</p>
+                    <div class="booking-info">
+                        <span class="label">Coverage:</span><span>Worldwide</span>
+                        <span class="label">Medical:</span><span>Up to $500K</span>
+                        <span class="label">Cancellation:</span><span>100% Refund</span>
+                        <span class="label">Support:</span><span>24/7 Helpline</span>
+                    </div>
+                    <button class="custom-btn" onclick="alert('Insurance plan selected!')">Get Covered</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ======= ACHIEVEMENTS SECTION ======= -->
+        <div class="achievements-section">
+            <h2 class="section-title reveal">🏆 Tourist Achievements</h2>
+            <div class="achievement-grid">
+
+                <div class="achievement-card reveal tiltable">
+                    <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Sarah Jenkins">
+                    <h3>Sarah Jenkins</h3>
+                    <p><b>Achievement:</b> Scaled the Inca Trail to Machu Picchu in record time and captured award-winning sunrise photography.</p>
+                </div>
+
+                <div class="achievement-card reveal tiltable">
+                    <img src="https://randomuser.me/api/portraits/men/15.jpg" alt="Marcus Thorne">
+                    <h3>Marcus Thorne</h3>
+                    <p><b>Achievement:</b> Traveled to all 7 Destinations on our list in a single year, learning local conversational phrases for every region.</p>
+                </div>
+
+                <div class="achievement-card reveal tiltable">
+                    <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?w=200&h=200&fit=crop&crop=faces&auto=format" alt="Amina & David">
+                    <h3>Amina &amp; David</h3>
+                    <p><b>Achievement:</b> Successfully proposed at the top of the Eiffel Tower, kicking off an incredible luxury honeymoon covering Paris and Santorini.</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- end .main-container -->
+
+    <script>
+        // Toggle description text
+        function toggleText(button) {
+            const textEl = button.nextElementSibling;
+            if (textEl && textEl.classList.contains('desc-text')) {
+                const isOpen = textEl.classList.contains('show');
+                textEl.classList.toggle('show');
+                button.textContent = isOpen ? 'Explore More' : 'Show Less';
+            }
+        }
+
+        // Scroll reveal + 3D tilt
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for reveal
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.12 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // 3D Mouse Tilt on cards & booking cards
+            document.querySelectorAll('.tiltable').forEach(el => {
+                el.addEventListener('mousemove', (e) => {
+                    if (window.innerWidth < 768) return;
+                    const rect = el.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const cx = rect.width / 2, cy = rect.height / 2;
+                    const rotX = ((y - cy) / cy) * -4;
+                    const rotY = ((x - cx) / cx) * 4;
+                    el.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02,1.02,1.02)`;
+                    el.style.transition = 'none';
+                });
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = '';
+                    el.style.transition = 'transform 0.5s ease-out';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
