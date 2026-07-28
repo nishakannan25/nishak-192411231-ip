@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vanam — Book Your Bus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bus-reservation.css">
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <span class="brand-mark">🚌</span>
+        <span class="brand-name">VANAM</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#routes">Routes</a>
+        <a href="#why">Why Vanam</a>
+        <a href="#track">Track Bus</a>
+      </nav>
+      <button class="nav-cta">My Bookings</button>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="road-line"></div>
+      <span class="hero-bus">🚌</span>
+    </div>
+
+    <div class="hero-content">
+      <p class="eyebrow">728 routes · 46 cities · departs every 20 min</p>
+      <h1>Your seat is waiting.<br>Where's it taking you?</h1>
+      <p class="hero-sub">Search, compare seats, and hold your spot — all before your chai gets cold.</p>
+    </div>
+
+    <!-- Signature element: ticket-stub search card -->
+    <form class="ticket-search" onsubmit="return false;">
+      <div class="ticket-main">
+        <div class="field">
+          <label>From</label>
+          <input type="text" placeholder="Coimbatore" value="Coimbatore">
+        </div>
+        <button type="button" class="swap-btn" title="Swap cities">⇄</button>
+        <div class="field">
+          <label>To</label>
+          <input type="text" placeholder="Bengaluru" value="Bengaluru">
+        </div>
+        <div class="field field-date">
+          <label>Travel date</label>
+          <input type="date" value="2026-07-24">
+        </div>
+        <button type="submit" class="search-btn">Search buses</button>
+      </div>
+
+      <div class="perforation" aria-hidden="true"></div>
+
+      <div class="ticket-stub">
+        <div class="stub-item">
+          <span class="stub-label">Trip</span>
+          <span class="stub-value">One way</span>
+        </div>
+        <div class="stub-item">
+          <span class="stub-label">Passengers</span>
+          <span class="stub-value">1 Adult</span>
+        </div>
+        <div class="stub-item">
+          <span class="stub-label">Boarding</span>
+          <span class="stub-value">Gandhipuram</span>
+        </div>
+        <div class="stub-barcode" aria-hidden="true"></div>
+      </div>
+    </form>
+  </section>
+
+  <!-- ============ POPULAR ROUTES ============ -->
+  <section class="routes" id="routes">
+    <h2>Popular routes right now</h2>
+    <p class="section-sub">Fares shown are lowest available for a standard seat.</p>
+
+    <div class="route-grid">
+
+      <article class="route-card">
+        <div class="route-card-top">
+          <span class="route-cities">Coimbatore <span class="arrow">→</span> Chennai</span>
+          <span class="route-tag">AC Sleeper</span>
+        </div>
+        <div class="route-time">
+          <span>10:30 PM</span>
+          <span class="dots"></span>
+          <span>06:15 AM</span>
+        </div>
+        <div class="route-card-bottom">
+          <span class="route-duration">7h 45m · 32 buses today</span>
+          <span class="route-price">₹649</span>
+        </div>
+      </article>
+
+      <article class="route-card">
+        <div class="route-card-top">
+          <span class="route-cities">Bengaluru <span class="arrow">→</span> Hyderabad</span>
+          <span class="route-tag">Semi Sleeper</span>
+        </div>
+        <div class="route-time">
+          <span>09:00 PM</span>
+          <span class="dots"></span>
+          <span>07:30 AM</span>
+        </div>
+        <div class="route-card-bottom">
+          <span class="route-duration">10h 30m · 18 buses today</span>
+          <span class="route-price">₹899</span>
+        </div>
+      </article>
+
+      <article class="route-card">
+        <div class="route-card-top">
+          <span class="route-cities">Madurai <span class="arrow">→</span> Coimbatore</span>
+          <span class="route-tag">Non-AC Seater</span>
+        </div>
+        <div class="route-time">
+          <span>06:15 AM</span>
+          <span class="dots"></span>
+          <span>10:45 AM</span>
+        </div>
+        <div class="route-card-bottom">
+          <span class="route-duration">4h 30m · 41 buses today</span>
+          <span class="route-price">₹310</span>
+        </div>
+      </article>
+
+      <article class="route-card">
+        <div class="route-card-top">
+          <span class="route-cities">Chennai <span class="arrow">→</span> Pondicherry</span>
+          <span class="route-tag">AC Seater</span>
+        </div>
+        <div class="route-time">
+          <span>02:00 PM</span>
+          <span class="dots"></span>
+          <span>05:30 PM</span>
+        </div>
+        <div class="route-card-bottom">
+          <span class="route-duration">3h 30m · 26 buses today</span>
+          <span class="route-price">₹420</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ WHY VANAM ============ -->
+  <section class="why" id="why">
+    <h2>Built for the whole journey, not just the booking</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <span class="why-icon">💺</span>
+        <h3>Pick your exact seat</h3>
+        <p>See the real layout of your bus — window, aisle, upper berth — before you pay.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">📍</span>
+        <h3>Live tracking</h3>
+        <p>Watch your bus move on the map and get a nudge 15 minutes before it reaches your stop.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">↩️</span>
+        <h3>Easy cancellation</h3>
+        <p>Plans change. Cancel up to 4 hours before departure and get most of your fare back.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🎧</span>
+        <h3>Help when you need it</h3>
+        <p>A real person on chat, day or night, if your boarding point ever feels uncertain.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="brand">
+        <span class="brand-mark">🚌</span>
+        <span class="brand-name">VANAM</span>
+      </div>
+      <p>© 2026 Vanam Travels. Every seat, tracked from doorstep to destination.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
