@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to My Website</title>
+<style>
+    /* ---------- Global Styles ---------- */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Cambria', serif;
+        font-size: 14px;
+        background-color: lightblue;
+        text-align: center;
+        color: #003366;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #003366;
+        font-size: 28px;
+        margin-bottom: 10px;
+        font-family: 'Cambria', serif;
+    }
+
+    p.subtitle {
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: #002244;
+    }
+
+    /* ---------- Scrolling Text (Marquee using CSS) ---------- */
+    .scroll-container {
+        width: 100%;
+        overflow: hidden;
+        background-color: #b0dfff;
+        border: 2px solid #005b96;
+        border-radius: 8px;
+        padding: 10px 0;
+        margin: 20px auto;
+        max-width: 800px;
+    }
+
+    .scroll-text {
+        display: inline-block;
+        white-space: nowrap;
+        padding-left: 100%;
+        font-size: 16px;
+        font-weight: bold;
+        color: #003366;
+        animation: scroll-left 12s linear infinite;
+    }
+
+    @keyframes scroll-left {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+    /* ---------- Grid Box Layout ---------- */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 900px;
+        margin: 30px auto;
+    }
+
+    .grid-item {
+        background-color: #e6f4ff;
+        border: 2px solid #4a90d9;
+        border-radius: 10px;
+        padding: 20px;
+        color: #003366;
+        font-size: 14px;
+        box-shadow: 2px 2px 8px rgba(0, 91, 150, 0.3);
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .grid-item:hover {
+        transform: translateY(-5px);
+        background-color: #d0ecff;
+    }
+
+    .grid-item h3 {
+        margin-bottom: 8px;
+        color: #002244;
+        font-size: 16px;
+    }
+
+    /* ---------- Blue Button ---------- */
+    .btn {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 30px;
+        background-color: #005b96;
+        color: white;
+        font-family: 'Cambria', serif;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #003f6b;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+        margin-top: 40px;
+        font-size: 12px;
+        color: #003366;
+    }
+
+    /* Responsive adjustment */
+    @media (max-width: 600px) {
+        .grid-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+<body>
+
+    <h1>Welcome to My Website</h1>
+    <p class="subtitle">A simple page built with HTML &amp; CSS — light blue theme, Cambria font.</p>
+
+    <!-- Scrolling Text Section -->
+    <div class="scroll-container">
+        <span class="scroll-text">🌊 Welcome to my website — Explore. Learn. Enjoy your visit! 🌊 Thank you for stopping by. 🌊</span>
+    </div>
+
+    <!-- Grid Box Layout Section -->
+    <div class="grid-container">
+        <div class="grid-item">
+            <h3>About</h3>
+            <p>This page demonstrates a light blue themed layout built using pure HTML and CSS.</p>
+        </div>
+        <div class="grid-item">
+            <h3>Design</h3>
+            <p>Uses Cambria font at 14px, with a blue and white color scheme throughout.</p>
+        </div>
+        <div class="grid-item">
+            <h3>Features</h3>
+            <p>Includes CSS scrolling text, grid box layout, and a styled blue button.</p>
+        </div>
+    </div>
+
+    <!-- Blue Button -->
+    <a href="#" class="btn">Click Me</a>
+
+    <footer>
+        &copy; 2026 My Website. All rights reserved.
+    </footer>
+
+</body>
+</html>
