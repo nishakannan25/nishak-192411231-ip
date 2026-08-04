@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Air — Book a Flight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-950:#0a1424;
+  --navy-900:#0e1c33;
+  --navy-850:#122347;
+  --navy-800:#16294f;
+  --navy-700:#1c3260;
+  --navy-600:#28417a;
+  --amber-500:#f5a623;
+  --amber-300:#ffd27a;
+  --amber-glow: rgba(245,166,35,0.35);
+  --teal-400:#4fd1c5;
+  --teal-300:#8ce8de;
+  --red-500:#e5545a;
+  --cream-100:#f3f0e9;
+  --slate-300:#c3cfe6;
+  --slate-400:#8a9bb8;
+  --slate-500:#5f7195;
+  --radius-lg:22px;
+  --radius-md:14px;
+  --radius-sm:8px;
+  --ease: cubic-bezier(.22,.9,.32,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 1200px 700px at 15% -10%, rgba(79,209,197,0.08), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 90% 10%, rgba(245,166,35,0.10), transparent 55%),
+    var(--navy-950);
+  color:var(--cream-100);
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+::selection{background:var(--amber-500);color:var(--navy-950);}
+
+/* subtle star / grid texture */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.25) 1px, transparent 1px),
+    radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.18) 1px, transparent 1px),
+    radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.20) 1px, transparent 1px),
+    radial-gradient(1px 1px at 35% 80%, rgba(255,255,255,0.15) 1px, transparent 1px),
+    radial-gradient(1px 1px at 90% 85%, rgba(255,255,255,0.20) 1px, transparent 1px);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ============ HEADER / NAV ============ */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 5vw;
+  background:rgba(10,20,36,0.72);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand-mark{
+  width:34px; height:34px; border-radius:9px;
+  background:linear-gradient(140deg, var(--amber-500), var(--amber-300));
+  display:flex; align-items:center; justify-content:center;
+  color:var(--navy-950); font-weight:700;
+  box-shadow:0 0 24px var(--amber-glow);
+  transform:rotate(0deg);
+  transition:transform .6s var(--ease);
+}
+.brand:hover .brand-mark{transform:rotate(45deg);}
+.brand-name{font-weight:600; font-size:1.05rem; letter-spacing:0.02em;}
+.brand-name span{color:var(--amber-300);}
+.nav-links{display:flex; align-items:center; gap:28px;}
+.nav-links a{color:var(--slate-300); text-decoration:none; font-size:0.88rem; letter-spacing:0.03em; cursor:pointer; transition:color .2s;}
+.nav-links a:hover{color:var(--cream-100);}
+.pnr-chip{
+  font-family:'IBM Plex Mono',monospace; font-size:0.75rem;
+  color:var(--teal-300); border:1px solid rgba(79,209,197,0.35);
+  padding:6px 12px; border-radius:100px; letter-spacing:0.05em;
+  display:none;
+}
+
+/* ============ PROGRESS STEPPER ============ */
+.stepper-wrap{
+  position:relative; z-index:10;
+  max-width:920px; margin:34px auto 0; padding:0 5vw;
+}
+.stepper{
+  display:flex; justify-content:space-between; position:relative;
+}
+.stepper::before{
+  content:""; position:absolute; top:13px; left:0; right:0; height:2px;
+  background:rgba(255,255,255,0.08);
+}
+.step-fill{
+  position:absolute; top:13px; left:0; height:2px;
+  background:linear-gradient(90deg, var(--amber-500), var(--teal-400));
+  width:0%; transition:width .6s var(--ease);
+}
+.step{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:8px;
+  z-index:2; flex:1;
+}
+.step-dot{
+  width:28px; height:28px; border-radius:50%;
+  background:var(--navy-900); border:2px solid var(--slate-500);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.7rem; font-family:'IBM Plex Mono',monospace; color:var(--slate-400);
+  transition:all .4s var(--ease);
+}
+.step.active .step-dot{border-color:var(--amber-500); color:var(--amber-300); box-shadow:0 0 0 5px var(--amber-glow);}
+.step.done .step-dot{background:var(--teal-400); border-color:var(--teal-400); color:var(--navy-950);}
+.step-label{font-size:0.68rem; color:var(--slate-400); letter-spacing:0.04em; text-transform:uppercase; text-align:center;}
+.step.active .step-label{color:var(--cream-100);}
+
+/* ============ SECTIONS / VIEWS ============ */
+.view{
+  max-width:1100px; margin:0 auto; padding:48px 5vw 100px;
+  position:relative; z-index:5;
+}
+.view[hidden]{display:none;}
+.view-enter{animation:viewIn .55s var(--ease);}
+@keyframes viewIn{
+  from{opacity:0; transform:translateY(18px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* ============ HERO ============ */
+.hero{text-align:left; margin-bottom:38px;}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--teal-300);
+  letter-spacing:0.12em; text-transform:uppercase; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{content:""; width:22px; height:1px; background:var(--teal-300); display:inline-block;}
+.hero h1{
+  font-size:clamp(2.1rem, 4.4vw, 3.4rem); line-height:1.05; margin:14px 0 12px; font-weight:600;
+  letter-spacing:-0.01em;
+}
+.hero h1 em{font-style:normal; color:var(--amber-300);}
+.hero p{color:var(--slate-300); font-size:1.02rem; max-width:560px; line-height:1.6;}
+
+/* ============ SEARCH CARD ============ */
+.search-card{
+  margin-top:32px;
+  background:linear-gradient(180deg, var(--navy-850), var(--navy-900));
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius-lg);
+  padding:28px;
+  box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);
+  position:relative;
+  overflow:hidden;
+}
+.search-card::after{
+  content:""; position:absolute; top:-40%; right:-10%; width:280px; height:280px;
+  background:radial-gradient(circle, var(--amber-glow), transparent 70%);
+  pointer-events:none;
+}
+.search-grid{
+  display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:end;
+}
+.swap-btn{
+  width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,0.12);
+  background:var(--navy-800); color:var(--amber-300); cursor:pointer; font-size:1rem;
+  display:flex; align-items:center; justify-content:center; margin-bottom:10px;
+  transition:transform .4s var(--ease), background .2s;
+}
+.swap-btn:hover{background:var(--navy-700); transform:rotate(180deg);}
+.field{display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate-400);}
+.field select, .field input{
+  background:var(--navy-800); border:1px solid rgba(255,255,255,0.1); color:var(--cream-100);
+  padding:12px 14px; border-radius:var(--radius-sm); font-size:0.95rem; font-family:inherit;
+  outline:none; transition:border-color .2s, box-shadow .2s;
+}
+.field select:focus, .field input:focus{border-color:var(--amber-500); box-shadow:0 0 0 3px var(--amber-glow);}
+.search-grid2{
+  display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:16px; margin-top:16px;
+}
+.search-btn{
+  background:linear-gradient(135deg, var(--amber-500), var(--amber-300));
+  color:var(--navy-950); border:none; border-radius:var(--radius-sm);
+  padding:13px 26px; font-weight:600; font-size:0.95rem; cursor:pointer;
+  display:flex; align-items:center; gap:8px; justify-content:center;
+  transition:transform .2s var(--ease), box-shadow .2s;
+  box-shadow:0 10px 24px -8px var(--amber-glow);
+}
+.search-btn:hover{transform:translateY(-2px); box-shadow:0 16px 30px -8px var(--amber-glow);}
+.search-btn:active{transform:translateY(0);}
+
+/* ============ SPLIT-FLAP BOARD (results) ============ */
+.board-header{
+  display:flex; align-items:center; justify-content:space-between; margin:44px 0 18px;
+}
+.board-header h2{font-size:1.4rem; font-weight:600;}
+.board-sub{color:var(--slate-400); font-size:0.88rem;}
+.board{
+  background:var(--navy-950); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg);
+  overflow:hidden; box-shadow:inset 0 0 60px rgba(0,0,0,0.4);
+}
+.board-cols{
+  display:grid; grid-template-columns:1.1fr 1fr 1fr 1fr 0.9fr 0.9fr 1fr;
+  gap:0; padding:14px 22px; font-family:'IBM Plex Mono',monospace; font-size:0.68rem;
+  color:var(--slate-500); text-transform:uppercase; letter-spacing:0.08em;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.flight-row{
+  display:grid; grid-template-columns:1.1fr 1fr 1fr 1fr 0.9fr 0.9fr 1fr;
+  align-items:center; gap:0; padding:16px 22px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  cursor:pointer; transition:background .2s;
+}
+.flight-row:last-child{border-bottom:none;}
+.flight-row:hover{background:rgba(255,255,255,0.03);}
+.flip-cell{font-family:'IBM Plex Mono',monospace; display:flex; gap:2px;}
+.flip-char{
+  display:inline-block; background:var(--navy-800); border-radius:3px;
+  width:1.35em; text-align:center; padding:2px 0; font-size:0.95rem; font-weight:500;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.flight-code{color:var(--amber-300); font-weight:600;}
+.route-cell{color:var(--cream-100); font-size:0.9rem;}
+.route-cell .arrow{color:var(--slate-500); margin:0 6px;}
+.time-cell{font-family:'IBM Plex Mono',monospace; font-size:0.92rem;}
+.duration-cell{color:var(--slate-400); font-size:0.82rem;}
+.price-cell{font-family:'IBM Plex Mono',monospace; font-size:1.02rem; color:var(--teal-300); font-weight:600;}
+.select-cell{text-align:right;}
+.pill-btn{
+  background:transparent; border:1px solid var(--amber-500); color:var(--amber-300);
+  padding:8px 16px; border-radius:100px; font-size:0.78rem; cursor:pointer; font-weight:600;
+  transition:all .2s;
+}
+.pill-btn:hover{background:var(--amber-500); color:var(--navy-950);}
+
+/* ============ SEAT MAP ============ */
+.seat-layout{display:grid; grid-template-columns:1fr 320px; gap:36px; align-items:start; margin-top:28px;}
+.cabin{
+  background:linear-gradient(180deg, var(--navy-850), var(--navy-900));
+  border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg);
+  padding:32px 24px 36px; position:relative;
+}
+.cabin-nose{
+  width:70%; margin:0 auto 18px; height:26px;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:var(--navy-700); opacity:0.6;
+}
+.class-divider{
+  text-align:center; color:var(--slate-400); font-size:0.68rem; text-transform:uppercase;
+  letter-spacing:0.1em; margin:22px 0 14px; font-family:'IBM Plex Mono',monospace;
+}
+.seat-row{display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px;}
+.row-num{width:20px; font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--slate-500); text-align:right;}
+.seat{
+  width:30px; height:30px; border-radius:7px 7px 3px 3px; border:1px solid rgba(255,255,255,0.12);
+  background:var(--navy-700); cursor:pointer; position:relative; transition:all .18s var(--ease);
+  display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:transparent;
+}
+.seat:hover:not(.occupied):not(.selected){background:var(--navy-600); transform:translateY(-2px);}
+.seat.occupied{background:rgba(229,84,90,0.18); border-color:rgba(229,84,90,0.4); cursor:not-allowed;}
+.seat.occupied::after{content:"×"; color:var(--red-500); font-size:0.75rem;}
+.seat.selected{background:var(--teal-400); border-color:var(--teal-400); box-shadow:0 0 16px rgba(79,209,197,0.5); transform:translateY(-2px);}
+.seat.selected::after{content:"✓"; color:var(--navy-950); font-size:0.7rem; font-weight:700;}
+.seat.business{width:34px; height:34px;}
+.aisle-gap{width:18px;}
+.seat-legend{display:flex; gap:20px; justify-content:center; margin-top:22px; flex-wrap:wrap;}
+.legend-item{display:flex; align-items:center; gap:8px; font-size:0.76rem; color:var(--slate-400);}
+.legend-swatch{width:16px; height:16px; border-radius:4px;}
+
+.seat-summary{
+  background:var(--navy-850); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg);
+  padding:24px; position:sticky; top:100px;
+}
+.seat-summary h3{margin:0 0 16px; font-size:1.05rem;}
+.summary-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.88rem; color:var(--slate-300);}
+.summary-row span:last-child{color:var(--cream-100); font-weight:500;}
+.summary-total{display:flex; justify-content:space-between; padding-top:14px; margin-top:6px; font-size:1.05rem; font-weight:600;}
+.summary-total span:last-child{color:var(--teal-300); font-family:'IBM Plex Mono',monospace;}
+.selected-seats-chips{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0;}
+.seat-chip{
+  background:rgba(79,209,197,0.14); border:1px solid rgba(79,209,197,0.35); color:var(--teal-300);
+  font-family:'IBM Plex Mono',monospace; font-size:0.75rem; padding:4px 9px; border-radius:6px;
+}
+
+/* ============ BUTTONS (generic) ============ */
+.btn-primary{
+  width:100%; margin-top:18px; background:linear-gradient(135deg, var(--amber-500), var(--amber-300));
+  color:var(--navy-950); border:none; border-radius:var(--radius-sm); padding:14px; font-weight:600;
+  font-size:0.96rem; cursor:pointer; transition:transform .2s var(--ease), opacity .2s;
+  box-shadow:0 10px 24px -8px var(--amber-glow);
+}
+.btn-primary:hover{transform:translateY(-2px);}
+.btn-primary:disabled{opacity:0.4; cursor:not-allowed; transform:none;}
+.btn-ghost{
+  width:100%; margin-top:10px; background:transparent; border:1px solid rgba(255,255,255,0.14);
+  color:var(--slate-300); border-radius:var(--radius-sm); padding:12px; font-size:0.9rem; cursor:pointer;
+  transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--slate-300); color:var(--cream-100);}
+
+/* ============ PASSENGER FORM ============ */
+.form-card{
+  max-width:680px; margin:28px auto 0; background:linear-gradient(180deg, var(--navy-850), var(--navy-900));
+  border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg); padding:32px;
+}
+.passenger-block{padding:18px 0; border-bottom:1px solid rgba(255,255,255,0.06);}
+.passenger-block:last-of-type{border-bottom:none;}
+.passenger-block h4{margin:0 0 14px; font-size:0.92rem; color:var(--amber-300); display:flex; align-items:center; gap:8px;}
+.passenger-block h4 .seat-tag{
+  font-family:'IBM Plex Mono',monospace; background:var(--navy-800); padding:2px 8px; border-radius:5px;
+  font-size:0.72rem; color:var(--teal-300);
+}
+.form-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-row .field label{font-size:0.68rem;}
+
+/* ============ PAYMENT ============ */
+.pay-layout{display:grid; grid-template-columns:1fr 300px; gap:32px; margin-top:24px;}
+.card-preview{
+  aspect-ratio:1.586; border-radius:18px;
+  background:linear-gradient(135deg, var(--navy-700), var(--navy-950) 70%);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:22px; display:flex; flex-direction:column; justify-content:space-between;
+  position:relative; overflow:hidden; margin-bottom:18px;
+  box-shadow:0 20px 40px -20px rgba(0,0,0,0.7);
+}
+.card-preview::before{
+  content:""; position:absolute; top:-50%; right:-20%; width:200px; height:200px;
+  background:radial-gradient(circle, var(--amber-glow), transparent 70%);
+}
+.card-chip{width:40px; height:30px; border-radius:6px; background:linear-gradient(135deg,#d9c98a,#a98a3f);}
+.card-num{font-family:'IBM Plex Mono',monospace; font-size:1.15rem; letter-spacing:0.12em; color:var(--cream-100);}
+.card-meta{display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--slate-400);}
+.card-meta b{color:var(--cream-100); display:block; font-size:0.85rem; margin-top:2px;}
+.pay-summary{
+  background:var(--navy-850); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg);
+  padding:24px; height:fit-content; position:sticky; top:100px;
+}
+.spinner{
+  width:18px; height:18px; border-radius:50%; border:2px solid rgba(10,20,36,0.3);
+  border-top-color:var(--navy-950); animation:spin .7s linear infinite; display:inline-block; vertical-align:middle; margin-right:8px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ============ E-TICKET ============ */
+.ticket-wrap{display:flex; justify-content:center; margin-top:34px;}
+.boarding-pass{
+  width:100%; max-width:760px; display:grid; grid-template-columns:1fr 220px;
+  background:var(--navy-850); border-radius:var(--radius-lg); overflow:hidden;
+  border:1px solid rgba(255,255,255,0.1); box-shadow:0 40px 80px -30px rgba(0,0,0,0.7);
+  position:relative; animation:ticketPop .6s var(--ease);
+}
+@keyframes ticketPop{
+  from{opacity:0; transform:scale(0.94) translateY(20px);}
+  to{opacity:1; transform:scale(1) translateY(0);}
+}
+.bp-main{padding:30px 28px;}
+.bp-airline{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+.bp-airline .brand-mark{width:28px; height:28px; font-size:0.8rem;}
+.bp-route{display:flex; align-items:center; gap:16px; margin-bottom:22px;}
+.bp-code{font-family:'Space Grotesk',sans-serif; font-size:2.1rem; font-weight:700; letter-spacing:-0.02em;}
+.bp-plane-icon{color:var(--amber-300); font-size:1.2rem;}
+.bp-city{color:var(--slate-400); font-size:0.75rem; margin-top:2px;}
+.bp-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px 8px; margin-top:20px;}
+.bp-item .label{font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate-500); margin-bottom:4px;}
+.bp-item .val{font-family:'IBM Plex Mono',monospace; font-size:0.95rem; color:var(--cream-100);}
+.bp-stub{
+  background:var(--navy-900); padding:26px 20px; display:flex; flex-direction:column; justify-content:space-between;
+  border-left:2px dashed rgba(255,255,255,0.15); position:relative;
+}
+.bp-stub::before, .bp-stub::after{
+  content:""; position:absolute; left:-11px; width:22px; height:22px; border-radius:50%;
+  background:var(--navy-950);
+}
+.bp-stub::before{top:-11px;}
+.bp-stub::after{bottom:-11px;}
+.barcode{display:flex; gap:2px; align-items:flex-end; height:46px; margin-top:14px;}
+.barcode div{width:3px; background:var(--cream-100); opacity:0.85;}
+.pnr-block{font-family:'IBM Plex Mono',monospace;}
+.pnr-block .label{font-size:0.6rem; color:var(--slate-500); text-transform:uppercase; letter-spacing:0.08em;}
+.pnr-block .pnr-val{font-size:1.3rem; color:var(--amber-300); font-weight:600; letter-spacing:0.08em; margin-top:2px;}
+.ticket-actions{display:flex; gap:12px; max-width:760px; margin:22px auto 0; justify-content:center;}
+.ticket-actions button{padding:11px 22px;}
+
+/* ============ BOOKING HISTORY ============ */
+.history-list{display:grid; gap:14px; margin-top:24px;}
+.history-card{
+  background:var(--navy-850); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-md);
+  padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  cursor:pointer; transition:border-color .2s, transform .2s;
+}
+.history-card:hover{border-color:var(--amber-500); transform:translateX(4px);}
+.hc-left{display:flex; align-items:center; gap:18px;}
+.hc-code{font-family:'IBM Plex Mono',monospace; color:var(--amber-300); font-weight:600;}
+.hc-route{font-size:0.92rem;}
+.hc-sub{color:var(--slate-500); font-size:0.76rem; margin-top:2px;}
+.hc-price{font-family:'IBM Plex Mono',monospace; color:var(--teal-300); font-weight:600;}
+.empty-state{
+  text-align:center; padding:60px 20px; color:var(--slate-400);
+}
+.empty-state .icon{font-size:2.4rem; margin-bottom:12px; opacity:0.5;}
+
+/* ============ TOAST ============ */
+.toast{
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(120%);
+  background:var(--navy-800); border:1px solid rgba(255,255,255,0.12); color:var(--cream-100);
+  padding:14px 22px; border-radius:12px; font-size:0.88rem; z-index:100;
+  transition:transform .4s var(--ease); box-shadow:0 20px 40px rgba(0,0,0,0.4);
+  display:flex; align-items:center; gap:10px;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast .dot{width:8px; height:8px; border-radius:50%; background:var(--teal-400);}
+
+footer{
+  text-align:center; padding:30px 5vw 40px; color:var(--slate-500); font-size:0.78rem;
+  border-top:1px solid rgba(255,255,255,0.06); position:relative; z-index:5;
+}
+
+@media (max-width: 860px){
+  .search-grid{grid-template-columns:1fr; }
+  .swap-btn{justify-self:center; transform:rotate(90deg);}
+  .search-grid2{grid-template-columns:1fr 1fr; }
+  .seat-layout{grid-template-columns:1fr;}
+  .pay-layout{grid-template-columns:1fr;}
+  .board-cols{display:none;}
+  .flight-row{grid-template-columns:1fr; row-gap:8px; text-align:left;}
+  .select-cell{text-align:left;}
+  .boarding-pass{grid-template-columns:1fr;}
+  .bp-stub{border-left:none; border-top:2px dashed rgba(255,255,255,0.15);}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">M</div>
+    <div class="brand-name">Meridian <span>Air</span></div>
+  </div>
+  <div class="nav-links">
+    <a onclick="goToStep(0)">Search</a>
+    <a onclick="showHistory()">Booking history</a>
+    <span class="pnr-chip" id="activePnr"></span>
+  </div>
+</div>
+
+<div class="stepper-wrap">
+  <div class="stepper" id="stepper">
+    <div class="step-fill" id="stepFill"></div>
+    <div class="step" data-step="0"><div class="step-dot">1</div><div class="step-label">Search</div></div>
+    <div class="step" data-step="1"><div class="step-dot">2</div><div class="step-label">Flights</div></div>
+    <div class="step" data-step="2"><div class="step-dot">3</div><div class="step-label">Seats</div></div>
+    <div class="step" data-step="3"><div class="step-dot">4</div><div class="step-label">Passengers</div></div>
+    <div class="step" data-step="4"><div class="step-dot">5</div><div class="step-label">Payment</div></div>
+    <div class="step" data-step="5"><div class="step-dot">6</div><div class="step-label">E-Ticket</div></div>
+  </div>
+</div>
+
+<!-- ============ VIEW 0: SEARCH ============ -->
+<section class="view" id="view-search">
+  <div class="hero">
+    <div class="eyebrow">Now boarding</div>
+    <h1>Find your <em>next</em> departure.</h1>
+    <p>Search real-time fares across Meridian's network, pick your seat on an interactive cabin map, and get your boarding pass in minutes.</p>
+  </div>
+
+  <div class="search-card">
+    <div class="search-grid">
+      <div class="field">
+        <label>From</label>
+        <select id="fromAirport"></select>
+      </div>
+      <button class="swap-btn" onclick="swapAirports()" title="Swap">⇄</button>
+      <div class="field">
+        <label>To</label>
+        <select id="toAirport"></select>
+      </div>
+    </div>
+    <div class="search-grid2">
+      <div class="field">
+        <label>Departure date</label>
+        <input type="date" id="depDate">
+      </div>
+      <div class="field">
+        <label>Passengers</label>
+        <select id="paxCount">
+          <option value="1">1 passenger</option>
+          <option value="2">2 passengers</option>
+          <option value="3">3 passengers</option>
+          <option value="4">4 passengers</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Class</label>
+        <select id="travelClass">
+          <option value="Economy">Economy</option>
+          <option value="Business">Business</option>
+        </select>
+      </div>
+      <button class="search-btn" onclick="searchFlights()">Search flights →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIEW 1: RESULTS (split-flap board) ============ -->
+<section class="view" id="view-results" hidden>
+  <div class="board-header">
+    <div>
+      <h2>Departure board</h2>
+      <div class="board-sub" id="resultsSub"></div>
+    </div>
+    <button class="btn-ghost" style="width:auto; margin:0; padding:10px 18px;" onclick="goToStep(0)">← New search</button>
+  </div>
+  <div class="board">
+    <div class="board-cols">
+      <div>Flight</div><div>Route</div><div>Departs</div><div>Arrives</div><div>Duration</div><div>Fare</div><div></div>
+    </div>
+    <div id="flightList"></div>
+  </div>
+</section>
+
+<!-- ============ VIEW 2: SEAT SELECTION ============ -->
+<section class="view" id="view-seats" hidden>
+  <div class="board-header">
+    <div>
+      <h2>Choose your seats</h2>
+      <div class="board-sub" id="seatsSub"></div>
+    </div>
+    <button class="btn-ghost" style="width:auto; margin:0; padding:10px 18px;" onclick="goToStep(1)">← Back to flights</button>
+  </div>
+  <div class="seat-layout">
+    <div class="cabin">
+      <div class="cabin-nose"></div>
+      <div id="cabinContent"></div>
+      <div class="seat-legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--navy-700); border:1px solid rgba(255,255,255,0.15);"></span>Available</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--teal-400);"></span>Selected</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:rgba(229,84,90,0.25); border:1px solid var(--red-500);"></span>Occupied</div>
+      </div>
+    </div>
+    <div class="seat-summary">
+      <h3>Your selection</h3>
+      <div class="selected-seats-chips" id="seatChips"></div>
+      <div class="summary-row"><span>Flight</span><span id="sumFlight">—</span></div>
+      <div class="summary-row"><span>Passengers</span><span id="sumPax">—</span></div>
+      <div class="summary-row"><span>Base fare (each)</span><span id="sumFare">—</span></div>
+      <div class="summary-total"><span>Total</span><span id="sumTotal">—</span></div>
+      <button class="btn-primary" id="seatsContinueBtn" onclick="goToStep(3)" disabled>Continue to passenger details</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIEW 3: PASSENGER DETAILS ============ -->
+<section class="view" id="view-passengers" hidden>
+  <div class="board-header">
+    <div><h2>Passenger details</h2><div class="board-sub">Enter details for each traveler, matching their ID.</div></div>
+    <button class="btn-ghost" style="width:auto; margin:0; padding:10px 18px;" onclick="goToStep(2)">← Back to seats</button>
+  </div>
+  <div class="form-card">
+    <div id="passengerForms"></div>
+    <button class="btn-primary" onclick="submitPassengers()">Continue to payment</button>
+  </div>
+</section>
+
+<!-- ============ VIEW 4: PAYMENT ============ -->
+<section class="view" id="view-payment" hidden>
+  <div class="board-header">
+    <div><h2>Payment</h2><div class="board-sub">This is a simulated payment — no real card is charged.</div></div>
+    <button class="btn-ghost" style="width:auto; margin:0; padding:10px 18px;" onclick="goToStep(3)">← Back</button>
+  </div>
+  <div class="pay-layout">
+    <div class="form-card" style="margin:0; max-width:none;">
+      <div class="card-preview">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="card-chip"></div>
+          <div style="font-family:'Space Grotesk'; font-weight:700; letter-spacing:0.05em; color:var(--amber-300);">MERIDIAN PAY</div>
+        </div>
+        <div class="card-num" id="pvNumber">•••• •••• •••• ••••</div>
+        <div class="card-meta">
+          <div>Card holder<b id="pvName">YOUR NAME</b></div>
+          <div>Expires<b id="pvExpiry">MM/YY</b></div>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="field"><label>Name on card</label><input id="cardName" placeholder="As printed on card" oninput="updateCardPreview()"></div>
+      </div>
+      <div class="form-row full">
+        <div class="field"><label>Card number</label><input id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" oninput="formatCardNumber(this); updateCardPreview()"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Expiry</label><input id="cardExpiry" maxlength="5" placeholder="MM/YY" oninput="formatExpiry(this); updateCardPreview()"></div>
+        <div class="field"><label>CVV</label><input id="cardCvv" maxlength="3" placeholder="•••" type="password"></div>
+      </div>
+      <button class="btn-primary" id="payBtn" onclick="processPayment()">Pay & confirm booking</button>
+    </div>
+    <div class="pay-summary">
+      <h3 style="margin-top:0; font-size:1.05rem;">Order summary</h3>
+      <div class="summary-row"><span>Flight</span><span id="paySumFlight">—</span></div>
+      <div class="summary-row"><span>Seats</span><span id="paySumSeats">—</span></div>
+      <div class="summary-row"><span>Passengers</span><span id="paySumPax">—</span></div>
+      <div class="summary-row"><span>Class</span><span id="paySumClass">—</span></div>
+      <div class="summary-total"><span>Total due</span><span id="paySumTotal">—</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIEW 5: E-TICKET ============ -->
+<section class="view" id="view-ticket" hidden>
+  <div style="text-align:center; margin-bottom:6px;">
+    <div class="eyebrow" style="justify-content:center;">Booking confirmed</div>
+    <h2 style="margin:12px 0 6px;">You're all set to fly.</h2>
+    <p style="color:var(--slate-400); max-width:480px; margin:0 auto;">Your e-ticket is below. Save it or check your booking history any time.</p>
+  </div>
+  <div class="ticket-wrap"><div class="boarding-pass" id="ticketCard"></div></div>
+  <div class="ticket-actions">
+    <button class="pill-btn" onclick="window.print()">Download / print</button>
+    <button class="pill-btn" onclick="goToStep(0); resetFlow();">Book another flight</button>
+  </div>
+</section>
+
+<!-- ============ VIEW 6: HISTORY ============ -->
+<section class="view" id="view-history" hidden>
+  <div class="board-header">
+    <div><h2>Booking history</h2><div class="board-sub" id="historySub"></div></div>
+    <button class="btn-ghost" style="width:auto; margin:0; padding:10px 18px;" onclick="goToStep(0)">← New search</button>
+  </div>
+  <div class="history-list" id="historyList"></div>
+</section>
+
+<footer>Meridian Air · Simulated booking flow for demonstration purposes · No real payments are processed</footer>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg"></span></div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const AIRPORTS = [
+  {code:'DEL', city:'Delhi'}, {code:'BOM', city:'Mumbai'}, {code:'BLR', city:'Bengaluru'},
+  {code:'MAA', city:'Chennai'}, {code:'CCU', city:'Kolkata'}, {code:'HYD', city:'Hyderabad'},
+  {code:'GOI', city:'Goa'}, {code:'DXB', city:'Dubai'}, {code:'SIN', city:'Singapore'}, {code:'LHR', city:'London'}
+];
+const FLIGHT_PREFIXES = ['MA','MQ','MX'];
+
+let state = {
+  from:null, to:null, date:null, pax:1, cls:'Economy',
+  flight:null, seats:[], passengers:[], card:null, pnr:null,
+  bookings: []
+};
+let currentStep = 0;
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function populateAirports(){
+  const fromSel = document.getElementById('fromAirport');
+  const toSel = document.getElementById('toAirport');
+  AIRPORTS.forEach((a,i)=>{
+    fromSel.innerHTML += `<option value="${a.code}">${a.code} — ${a.city}</option>`;
+    toSel.innerHTML += `<option value="${a.code}">${a.code} — ${a.city}</option>`;
+  });
+  fromSel.value = 'DEL';
+  toSel.value = 'BOM';
+  const dateInput = document.getElementById('depDate');
+  const today = new Date();
+  today.setDate(today.getDate()+3);
+  dateInput.value = today.toISOString().split('T')[0];
+  dateInput.min = new Date().toISOString().split('T')[0];
+}
+function swapAirports(){
+  const f = document.getElementById('fromAirport');
+  const t = document.getElementById('toAirport');
+  const tmp = f.value; f.value = t.value; t.value = tmp;
+}
+
+/* ============================================================
+   STEPPER / VIEW NAVIGATION
+   ============================================================ */
+const stepViews = ['view-search','view-results','view-seats','view-passengers','view-payment','view-ticket'];
+function goToStep(n){
+  currentStep = n;
+  stepViews.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.hidden = (i !== n);
+  });
+  document.getElementById('view-history').hidden = true;
+  const active = document.getElementById(stepViews[n]);
+  active.classList.remove('view-enter'); void active.offsetWidth; active.classList.add('view-enter');
+
+  document.querySelectorAll('.step').forEach(s=>{
+    const idx = parseInt(s.dataset.step);
+    s.classList.toggle('active', idx===n);
+    s.classList.toggle('done', idx<n);
+  });
+  const pct = (n/(stepViews.length-1))*100;
+  document.getElementById('stepFill').style.width = pct+'%';
+  document.getElementById('stepper').style.display = n===5 ? 'none' : 'flex';
+  document.querySelector('.stepper-wrap').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function showHistory(){
+  stepViews.forEach(id=> document.getElementById(id).hidden = true);
+  document.querySelector('.stepper-wrap').style.display = 'none';
+  const hv = document.getElementById('view-history');
+  hv.hidden = false;
+  hv.classList.remove('view-enter'); void hv.offsetWidth; hv.classList.add('view-enter');
+  renderHistory();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function toast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   SEARCH -> generate mock flights
+   ============================================================ */
+function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function pad(n){ return n.toString().padStart(2,'0'); }
+function genFlights(from, to, cls){
+  const count = rand(4,6);
+  const list = [];
+  for(let i=0;i<count;i++){
+    const prefix = FLIGHT_PREFIXES[rand(0,FLIGHT_PREFIXES.length-1)];
+    const num = rand(100,999);
+    const depH = rand(5,22), depM = [0,15,30,45][rand(0,3)];
+    const durMin = rand(75, 420);
+    let arrTotal = depH*60+depM+durMin;
+    const arrH = Math.floor(arrTotal/60)%24, arrM = arrTotal%60;
+    const durH = Math.floor(durMin/60), durMr = durMin%60;
+    const basePrice = cls==='Business' ? rand(18000,42000) : rand(3200,11500);
+    list.push({
+      code:`${prefix}${num}`,
+      from, to,
+      depTime:`${pad(depH)}:${pad(depM)}`,
+      arrTime:`${pad(arrH)}:${pad(arrM)}`,
+      duration:`${durH}h ${pad(durMr)}m`,
+      price: basePrice,
+      cls
+    });
+  }
+  list.sort((a,b)=> a.depTime.localeCompare(b.depTime));
+  return list;
+}
+
+function searchFlights(){
+  const from = document.getElementById('fromAirport').value;
+  const to = document.getElementById('toAirport').value;
+  const date = document.getElementById('depDate').value;
+  const pax = parseInt(document.getElementById('paxCount').value);
+  const cls = document.getElementById('travelClass').value;
+  if(from === to){ toast("Origin and destination can't be the same"); return; }
+  if(!date){ toast('Please choose a departure date'); return; }
+
+  state.from = from; state.to = to; state.date = date; state.pax = pax; state.cls = cls;
+  const flights = genFlights(from, to, cls);
+  state.searchResults = flights;
+
+  const fromCity = AIRPORTS.find(a=>a.code===from).city;
+  const toCity = AIRPORTS.find(a=>a.code===to).city;
+  document.getElementById('resultsSub').textContent =
+    `${flights.length} flights · ${fromCity} → ${toCity} · ${formatDate(date)} · ${pax} passenger${pax>1?'s':''} · ${cls}`;
+
+  renderFlightList(flights);
+  goToStep(1);
+}
+function formatDate(d){
+  const dt = new Date(d+'T00:00:00');
+  return dt.toLocaleDateString('en-US', {weekday:'short', day:'numeric', month:'short'});
+}
+
+function renderFlightList(flights){
+  const el = document.getElementById('flightList');
+  el.innerHTML = '';
+  flights.forEach((f,i)=>{
+    const row = document.createElement('div');
+    row.className = 'flight-row';
+    row.style.animationDelay = (i*70)+'ms';
+    row.innerHTML = `
+      <div class="flip-cell flight-code">${splitFlap(f.code)}</div>
+      <div class="route-cell">${f.from}<span class="arrow">→</span>${f.to}</div>
+      <div class="time-cell">${f.depTime}</div>
+      <div class="time-cell">${f.arrTime}</div>
+      <div class="duration-cell">${f.duration}</div>
+      <div class="price-cell">₹${f.price.toLocaleString('en-IN')}</div>
+      <div class="select-cell"><button class="pill-btn">Select</button></div>
+    `;
+    row.querySelector('.pill-btn').onclick = ()=> selectFlight(f);
+    row.onclick = (e)=>{ if(e.target.tagName!=='BUTTON') selectFlight(f); };
+    el.appendChild(row);
+  });
+}
+function splitFlap(code){
+  return code.split('').map(ch=>`<span class="flip-char">${ch}</span>`).join('');
+}
+
+/* ============================================================
+   SEAT SELECTION
+   ============================================================ */
+function selectFlight(f){
+  state.flight = f;
+  state.seats = [];
+  state.occupied = generateOccupied();
+  document.getElementById('seatsSub').textContent =
+    `${f.code} · ${f.from} → ${f.to} · ${f.depTime} · Select ${state.pax} seat${state.pax>1?'s':''}`;
+  renderCabin();
+  updateSeatSummary();
+  goToStep(2);
+}
+function generateOccupied(){
+  const occ = new Set();
+  const total = state.cls==='Business' ? 16 : 120;
+  const n = Math.floor(total*0.35);
+  const rows = state.cls==='Business' ? 4 : 20;
+  const letters = state.cls==='Business' ? ['A','C','D','F'] : ['A','B','C','D','E','F'];
+  for(let i=0;i<n;i++){
+    const r = rand(1,rows);
+    const l = letters[rand(0,letters.length-1)];
+    occ.add(`${r}${l}`);
+  }
+  return occ;
+}
+function renderCabin(){
+  const el = document.getElementById('cabinContent');
+  el.innerHTML = '';
+  if(state.cls==='Business'){
+    el.innerHTML += `<div class="class-divider">Business · 2–2</div>`;
+    for(let r=1;r<=4;r++){
+      el.appendChild(seatRow(r, ['A','C'], ['D','F'], true));
+    }
+  } else {
+    el.innerHTML += `<div class="class-divider">Economy · 3–3</div>`;
+    for(let r=1;r<=20;r++){
+      el.appendChild(seatRow(r, ['A','B','C'], ['D','E','F'], false));
+    }
+  }
+}
+function seatRow(rowNum, left, right, isBiz){
+  const row = document.createElement('div');
+  row.className = 'seat-row';
+  const rn = document.createElement('div');
+  rn.className = 'row-num'; rn.textContent = rowNum;
+  row.appendChild(rn);
+  left.forEach(l=> row.appendChild(makeSeat(rowNum, l, isBiz)));
+  const gap = document.createElement('div'); gap.className='aisle-gap'; row.appendChild(gap);
+  right.forEach(l=> row.appendChild(makeSeat(rowNum, l, isBiz)));
+  return row;
+}
+function makeSeat(rowNum, letter, isBiz){
+  const id = `${rowNum}${letter}`;
+  const btn = document.createElement('div');
+  btn.className = 'seat' + (isBiz?' business':'') + (state.occupied.has(id)?' occupied':'') + (state.seats.includes(id)?' selected':'');
+  btn.dataset.id = id;
+  btn.onclick = ()=> toggleSeat(id, btn);
+  return btn;
+}
+function toggleSeat(id, el){
+  if(state.occupied.has(id)) return;
+  const idx = state.seats.indexOf(id);
+  if(idx>-1){
+    state.seats.splice(idx,1);
+    el.classList.remove('selected');
+  } else {
+    if(state.seats.length >= state.pax){
+      toast(`You can select up to ${state.pax} seat${state.pax>1?'s':''}`);
+      return;
+    }
+    state.seats.push(id);
+    el.classList.add('selected');
+  }
+  updateSeatSummary();
+}
+function updateSeatSummary(){
+  const chips = document.getElementById('seatChips');
+  chips.innerHTML = state.seats.length
+    ? state.seats.map(s=>`<span class="seat-chip">${s}</span>`).join('')
+    : `<span style="color:var(--slate-500); font-size:0.82rem;">No seats selected yet</span>`;
+  document.getElementById('sumFlight').textContent = state.flight ? `${state.flight.code} · ${state.flight.from}→${state.flight.to}` : '—';
+  document.getElementById('sumPax').textContent = `${state.seats.length} / ${state.pax}`;
+  document.getElementById('sumFare').textContent = state.flight ? `₹${state.flight.price.toLocaleString('en-IN')}` : '—';
+  const total = state.flight ? state.flight.price * state.pax : 0;
+  document.getElementById('sumTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+  document.getElementById('seatsContinueBtn').disabled = state.seats.length !== state.pax;
+}
+
+/* ============================================================
+   PASSENGER DETAILS
+   ============================================================ */
+function enterPassengerStep(){
+  const wrap = document.getElementById('passengerForms');
+  wrap.innerHTML = '';
+  for(let i=0;i<state.pax;i++){
+    const block = document.createElement('div');
+    block.className = 'passenger-block';
+    block.innerHTML = `
+      <h4>Passenger ${i+1} <span class="seat-tag">Seat ${state.seats[i]}</span></h4>
+      <div class="form-row">
+        <div class="field"><label>Full name</label><input data-p="${i}" data-f="name" placeholder="As per government ID"></div>
+        <div class="field"><label>Date of birth</label><input data-p="${i}" data-f="dob" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Email</label><input data-p="${i}" data-f="email" type="email" placeholder="name@example.com"></div>
+        <div class="field"><label>Phone</label><input data-p="${i}" data-f="phone" type="tel" placeholder="+91 98765 43210"></div>
+      </div>
+    `;
+    wrap.appendChild(block);
+  }
+}
+function submitPassengers(){
+  const inputs = document.querySelectorAll('#passengerForms input');
+  const data = [];
+  for(let i=0;i<state.pax;i++) data.push({});
+  let valid = true;
+  inputs.forEach(inp=>{
+    const p = parseInt(inp.dataset.p), f = inp.dataset.f;
+    data[p][f] = inp.value.trim();
+    if(!inp.value.trim()) valid = false;
+  });
+  if(!valid){ toast('Please fill in every passenger field'); return; }
+  state.passengers = data;
+  enterPaymentStep();
+  goToStep(4);
+}
+
+/* ============================================================
+   PAYMENT
+   ============================================================ */
+function formatCardNumber(input){
+  let v = input.value.replace(/\D/g,'').slice(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(input){
+  let v = input.value.replace(/\D/g,'').slice(0,4);
+  if(v.length>=3) v = v.slice(0,2)+'/'+v.slice(2);
+  input.value = v;
+}
+function updateCardPreview(){
+  const num = document.getElementById('cardNumber').value;
+  const name = document.getElementById('cardName').value;
+  const exp = document.getElementById('cardExpiry').value;
+  document.getElementById('pvNumber').textContent = num ? num.padEnd(19,'•').slice(0,19) : '•••• •••• •••• ••••';
+  document.getElementById('pvName').textContent = name ? name.toUpperCase() : 'YOUR NAME';
+  document.getElementById('pvExpiry').textContent = exp || 'MM/YY';
+}
+function enterPaymentStep(){
+  const total = state.flight.price * state.pax;
+  document.getElementById('paySumFlight').textContent = `${state.flight.code} · ${state.flight.from}→${state.flight.to}`;
+  document.getElementById('paySumSeats').textContent = state.seats.join(', ');
+  document.getElementById('paySumPax').textContent = state.pax;
+  document.getElementById('paySumClass').textContent = state.cls;
+  document.getElementById('paySumTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+}
+function processPayment(){
+  const num = document.getElementById('cardNumber').value.replace(/\s/g,'');
+  const name = document.getElementById('cardName').value.trim();
+  const exp = document.getElementById('cardExpiry').value.trim();
+  const cvv = document.getElementById('cardCvv').value.trim();
+  if(num.length<16 || !name || exp.length<5 || cvv.length<3){
+    toast('Please complete all payment fields');
+    return;
+  }
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> Processing payment…`;
+  setTimeout(()=>{
+    state.card = {last4: num.slice(-4), name};
+    state.pnr = genPNR();
+    const booking = {
+      pnr: state.pnr,
+      flight: state.flight,
+      seats: [...state.seats],
+      passengers: [...state.passengers],
+      pax: state.pax,
+      cls: state.cls,
+      date: state.date,
+      total: state.flight.price * state.pax,
+      bookedOn: new Date().toISOString()
+    };
+    state.bookings.push(booking);
+    btn.disabled = false;
+    btn.textContent = 'Pay & confirm booking';
+    renderTicket(booking);
+    document.getElementById('activePnr').style.display = 'inline-block';
+    document.getElementById('activePnr').textContent = 'PNR '+state.pnr;
+    goToStep(5);
+    toast('Payment successful — booking confirmed');
+  }, 1400);
+}
+function genPNR(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for(let i=0;i<6;i++) s += chars[rand(0,chars.length-1)];
+  return s;
+}
+
+/* ============================================================
+   E-TICKET
+   ============================================================ */
+function renderTicket(b){
+  const fromCity = AIRPORTS.find(a=>a.code===b.flight.from).city;
+  const toCity = AIRPORTS.find(a=>a.code===b.flight.to).city;
+  const gate = 'G' + rand(1,32);
+  const boarding = subtractMinutes(b.flight.depTime, 35);
+  const leadPax = b.passengers[0]?.name || 'Passenger';
+  const bars = Array.from({length:34}, ()=> `<div style="height:${rand(40,100)}%; width:${rand(2,4)}px;"></div>`).join('');
+  document.getElementById('ticketCard').innerHTML = `
+    <div class="bp-main">
+      <div class="bp-airline">
+        <div class="brand-mark">M</div>
+        <div class="brand-name">Meridian <span>Air</span></div>
+      </div>
+      <div class="bp-route">
+        <div><div class="bp-code">${b.flight.from}</div><div class="bp-city">${fromCity}</div></div>
+        <div class="bp-plane-icon">✈</div>
+        <div><div class="bp-code">${b.flight.to}</div><div class="bp-city">${toCity}</div></div>
+      </div>
+      <div class="bp-grid">
+        <div class="bp-item"><div class="label">Passenger</div><div class="val">${leadPax}${b.pax>1?` +${b.pax-1}`:''}</div></div>
+        <div class="bp-item"><div class="label">Flight</div><div class="val">${b.flight.code}</div></div>
+        <div class="bp-item"><div class="label">Class</div><div class="val">${b.cls}</div></div>
+        <div class="bp-item"><div class="label">Date</div><div class="val">${formatDate(b.date)}</div></div>
+        <div class="bp-item"><div class="label">Departs</div><div class="val">${b.flight.depTime}</div></div>
+        <div class="bp-item"><div class="label">Boarding</div><div class="val">${boarding}</div></div>
+        <div class="bp-item"><div class="label">Seats</div><div class="val">${b.seats.join(', ')}</div></div>
+        <div class="bp-item"><div class="label">Gate</div><div class="val">${gate}</div></div>
+        <div class="bp-item"><div class="label">Fare paid</div><div class="val">₹${b.total.toLocaleString('en-IN')}</div></div>
+      </div>
+    </div>
+    <div class="bp-stub">
+      <div class="pnr-block">
+        <div class="label">Booking ref</div>
+        <div class="pnr-val">${b.pnr}</div>
+      </div>
+      <div class="pnr-block">
+        <div class="label">Seat</div>
+        <div class="pnr-val" style="font-size:1.1rem; color:var(--teal-300);">${b.seats[0]}</div>
+      </div>
+      <div>
+        <div class="barcode">${bars}</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--slate-500); margin-top:6px; letter-spacing:0.1em;">${b.pnr}${b.flight.code}</div>
+      </div>
+    </div>
+  `;
+}
+function subtractMinutes(hhmm, mins){
+  const [h,m] = hhmm.split(':').map(Number);
+  let total = h*60+m-mins;
+  if(total<0) total += 1440;
+  return `${pad(Math.floor(total/60)%24)}:${pad(total%60)}`;
+}
+
+/* ============================================================
+   BOOKING HISTORY
+   ============================================================ */
+function renderHistory(){
+  const list = document.getElementById('historyList');
+  document.getElementById('historySub').textContent = `${state.bookings.length} booking${state.bookings.length!==1?'s':''} this session`;
+  if(state.bookings.length===0){
+    list.innerHTML = `<div class="empty-state"><div class="icon">🛫</div><div>No bookings yet — search a flight to get started.</div></div>`;
+    return;
+  }
+  list.innerHTML = '';
+  [...state.bookings].reverse().forEach(b=>{
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.innerHTML = `
+      <div class="hc-left">
+        <div class="hc-code mono">${b.pnr}</div>
+        <div>
+          <div class="hc-route">${b.flight.code} · ${b.flight.from} → ${b.flight.to}</div>
+          <div class="hc-sub">${formatDate(b.date)} · ${b.seats.join(', ')} · ${b.cls}</div>
+        </div>
+      </div>
+      <div class="hc-price">₹${b.total.toLocaleString('en-IN')}</div>
+    `;
+    card.onclick = ()=>{ renderTicket(b); document.querySelector('.stepper-wrap').style.display='block'; goToStep(5); };
+    list.appendChild(card);
+  });
+}
+
+/* ============================================================
+   RESET / BOOTSTRAP
+   ============================================================ */
+function resetFlow(){
+  state.flight=null; state.seats=[]; state.passengers=[]; state.card=null; state.pnr=null;
+  document.getElementById('activePnr').style.display='none';
+}
+
+populateAirports();
+document.addEventListener('DOMContentLoaded', ()=>{});
+const _origGoToStep = goToStep;
+goToStep = function(n){
+  if(n===3) enterPassengerStep();
+  _origGoToStep(n);
+};
+</script>
+</body>
+</html>
